@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Tugas</title>
+  <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <header class="mb-8 text-center">
+    <h1 class="text-3xl md:text-4xl font-bold text-indigo-600 mb-2">Daftar Tugas</h1>
+    <p class="text-gray-600">Kelola tugas-tugas Anda dengan mudah</p>
+  </header>
+
+  <!-- Form untuk menambah tugas -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <form th:action="@{/add}" th:object="${newTask}" method="post" class="flex flex-col sm:flex-row gap-3">
+      <div class="flex-grow">
+        <input
+                type="text"
+                th:field="*{description}"
+                placeholder="Masukkan tugas baru"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+        >
+        <span
+                th:if="${#fields.hasErrors('description')}"
+                th:errors="*{description}"
+                class="text-red-500 text-sm mt-1"
+        ></span>
+      </div>
+      <button
+              type="submit"
+              class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 transition-all"
+      >
+        Tambah
+      </button>
+    </form>
+  </div>
+
+  <!-- Daftar tugas -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <ul class="divide-y divide-gray-200">
+      <li th:each="task : ${tasks}" class="p-4 hover:bg-gray-50 transition-colors">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+            <span
+                    th:class="${task.completed} ? 'text-gray-500 line-through' : 'text-gray-800'"
+                    th:text="${task.description}"
+                    class="font-medium flex-grow"
+            ></span>
+          <div class="flex gap-2 items-center flex-wrap">
+            <a
+                    th:href="@{/complete/{id}(id=${task.id})}"
+                    th:text="${task.completed} ? 'Batal Selesai' : 'Tandai Selesai'"
+                    th:class="${task.completed} ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' : 'bg-green-100 text-green-800 hover:bg-green-200'"
+                    class="px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            ></a>
+            <a
+                    th:href="@{/edit/{id}(id=${task.id})}"
+                    class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors"
+            >
+              Edit
+            </a>
+            <a
+                    th:href="@{/delete/{id}(id=${task.id})}"
+                    class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium hover:bg-red-200 transition-colors"
+                    onclick="return confirm('Apakah Anda yakin ingin menghapus tugas ini?')"
+            >
+              Hapus
+            </a>
+          </div>
+        </div>
+      </li>
+      <!-- Pesan jika tidak ada tugas -->
+      <li th:if="${#lists.isEmpty(tasks)}" class="p-8 text-center text-gray-500">
+        Belum ada tugas. Tambahkan tugas baru di atas.
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
